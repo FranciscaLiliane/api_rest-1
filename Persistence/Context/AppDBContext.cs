@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using api_rest.Domain.Models;
+using api_rest.Domain.Helpers;
 
 
 namespace api_rest.Persistence.Context
@@ -37,6 +38,28 @@ namespace api_rest.Persistence.Context
             builder.Entity<Product>().Property(p => p.Name).IsRequired().HasMaxLength(50);
             builder.Entity<Product>().Property(p => p.QuantityInPackage).IsRequired();
             builder.Entity<Product>().Property(p => p.UnitOfMeasurement).IsRequired();
+
+            builder.Entity<Product>().HasData
+            (
+                new Product
+                {
+                    Id = 100,
+                    Name = "Apple",
+                    QuantityInPackage = 1,
+                    UnitOfMeasurement = EUnitOfMeasurement.Unity,
+                    CategoryId = 100
+                },
+                new Product
+                {
+                    Id = 101,
+                    Name = "Milk",
+                    QuantityInPackage = 2,
+                    UnitOfMeasurement = EUnitOfMeasurement.Liter,
+                    CategoryId = 101,
+                }
+            );
+
+
         }
     
     }
