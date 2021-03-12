@@ -8,10 +8,12 @@ using api_rest.Domain.Models;
 using AutoMapper;
 using api_rest.Resources;
 using api_rest.Extensions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_rest.Controllers
 {
     [Route("/api/[controller]")]
+    [Authorize()]
     public class CategoryController : Controller
     {
 

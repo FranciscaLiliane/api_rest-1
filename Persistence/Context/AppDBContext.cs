@@ -14,6 +14,8 @@ namespace api_rest.Persistence.Context
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder builder)
@@ -59,6 +61,23 @@ namespace api_rest.Persistence.Context
                 }
             );
 
+            builder.Entity<User>().ToTable("Users");
+            builder.Entity<User>().HasKey(p => p.Id);
+            builder.Entity<User>().Property(p => p.Id).IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<User>().Property(p => p.Login).IsRequired().HasMaxLength(50);
+            builder.Entity<User>().Property(p => p.Password).IsRequired().HasMaxLength(10);
+            
+            builder.Entity<User>().HasData
+            (
+                new User
+                {
+                    Id = 100,
+                    Login = "john",
+                    Password = "12345",
+                    
+                }
+                
+            );
 
         }
     
