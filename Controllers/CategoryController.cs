@@ -27,6 +27,7 @@ namespace api_rest.Controllers
         }
 
         [HttpGet]
+
         public async Task<IEnumerable<CategoryResource>> GetAllAsync()
         {
             var categories = await _categoryService.ListAsync();

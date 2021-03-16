@@ -73,12 +73,10 @@ namespace api_rest
                     {
                         OnAuthenticationFailed = context =>
                         {
-                            //  Console.WriteLine("Token inválido: " + context.Exception.Message);
                             return Task.CompletedTask;
                         },
                         OnTokenValidated = context =>
                         {
-                            // Console.WriteLine("Token utilizado: " + context.SecurityToken);
                             return Task.CompletedTask;
                         }
                     };
