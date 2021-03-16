@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 using api_rest.Domain.Models;
 using api_rest.Domain.Services;
 using api_rest.Resources;
+using Microsoft.AspNetCore.Authorization;
 
 namespace api_rest.Controllers
 {
     [Route("/api/[controller]")]
+    [Authorize()]
     public class ProductController : Controller
     {
         private readonly IProductService _productService;

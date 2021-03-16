@@ -17,6 +17,9 @@ using api_rest.Services;
 using api_rest.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using AutoMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Text;
+using Microsoft.IdentityModel.Tokens;
 
 namespace api_rest
 {
@@ -26,7 +29,10 @@ namespace api_rest
 
         public Startup(IConfiguration configuration)
         {
-            Configuration = configuration;
+           var builder = new ConfigurationBuilder()
+          .AddJsonFile($"appsettings.json", optional: false, reloadOnChange: true)
+          .AddEnvironmentVariables();
+          this.Configuration = builder.Build();
         }
 
         public void ConfigureServices(IServiceCollection services)
@@ -34,18 +40,47 @@ namespace api_rest
             services.AddControllers();
 
             services.AddDbContext<AppDbContext>(options => {
-                options.UseInMemoryDatabase("supermarket-api-in-memory");
+                options.UseInMemoryDatabase("template-api-restful-memory");
             });
 
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<IProductRepository, ProductRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddScoped<ICategoryService, CategoryService>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IUserService, UserService>();
 
             services.AddAutoMapper();
-            
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+                opt =>
+                {
+                    var s = Encoding.UTF8.GetBytes(Configuration["SecurityKey"]);
+                    opt.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = Configuration["Issuer"],
+                        ValidAudience = Configuration["Audience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(s)
+                    };
+
+                    opt.Events = new JwtBearerEvents
+                    {
+                        OnAuthenticationFailed = context =>
+                        {
+                            return Task.CompletedTask;
+                        },
+                        OnTokenValidated = context =>
+                        {
+                            return Task.CompletedTask;
+                        }
+                    };
+                });
 
 
 
@@ -59,9 +94,10 @@ namespace api_rest
             }
 
             app.UseStaticFiles();
-            app.UseRouting();
             app.UseCors();
-
+            app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
