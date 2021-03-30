@@ -36,6 +36,24 @@ namespace api_rest.Controllers
             return resources;
         }
 
+        [HttpGet("{id}")]
+        public async Task<CategoryResource> GetByIdAsync(int id)
+        {
+            var category = await _categoryService.FindByIdAsync(id);
+            var resources = _mapper.Map<Category, CategoryResource>(category);
+
+            return resources;
+        }
+
+        [HttpGet("GetByName/{name}")]
+        public async Task<IEnumerable<CategoryResource>> GetByNameAsync(string name)
+        {
+            var categories = await _categoryService.FindByNameAsync(name);
+            var resources = _mapper.Map<IEnumerable<Category>, IEnumerable<CategoryResource>>(categories);
+
+            return resources;
+        }
+
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] SaveCategoryResource resource)
         {
